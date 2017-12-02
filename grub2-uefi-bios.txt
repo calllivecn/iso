@@ -8,12 +8,20 @@ sudo gdisk /dev/sda
 1. 分一个ESP  ef00
 2. 一个data区
 3. 用gdisk 打上bios_grub标记 ef02
+注：win7只读USB的第一个分区，
+所以把一个分区做数据分区。
+
+4. mkdir $mountpoint/EFI/boot/
+	cp $mountpoint/ubuntu/grubx64.efi $mountpoint/EFI/boot/bootx64.efi
+
 
 grub-install --target i386-pc \
 --recheck \
---boot-directory /tmp/grub/
+--boot-directory /tmp/grub/ /dev/sdX
 
 grub-install --target x86_64-efi \
 --efi-directory /tmp/grub/ \
 --boot-directory /tmp/grub/ \
 --removable
+
+
