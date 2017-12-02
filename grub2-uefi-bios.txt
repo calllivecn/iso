@@ -3,7 +3,8 @@
 # author calllivecn <c-all@qq.com>
 
 
-sudo gdisk /dev/sda
+
+注：如果同时需要bios和uefi。用dos分区表
 
 1. 分一个ESP  ef00
 2. 一个data区
@@ -22,6 +23,6 @@ grub-install --target i386-pc \
 grub-install --target x86_64-efi \
 --efi-directory /tmp/grub/ \
 --boot-directory /tmp/grub/ \
---removable
+--removable # --removable 安装当前的efi引导为 $mountpoint/EFI/BOOT/BOOTX64.EFI
 
 
