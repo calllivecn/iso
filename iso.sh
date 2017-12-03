@@ -19,5 +19,5 @@ xorriso -as mkisofs -o ${2} -no-pad \
 	-c isolinux/boot.cat -b isolinux/isolinux.bin \
 	-no-emul-boot -boot-load-size 4 -boot-info-table \
 	-eltorito-alt-boot -e boot/efi.img -no-emul-boot \
-	-isohybrid-gpt-basdat -isohybrid-apm-hfsplus \ #-appid "Deepin LiveCD" -publisher "Deepin Project <http://www.deepin.org>" \
+	-isohybrid-gpt-basdat -isohybrid-apm-hfsplus \ #-appid "mini linux" -publisher "calllivecn <http://github.com/calllivecn/iso>" \
 	-V "${3}" ${1}
