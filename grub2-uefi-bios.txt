@@ -8,9 +8,21 @@
 
 1. 分一个ESP  ef00
 2. 一个data区
-3. 用gdisk 打上bios_grub标记 ef02
+3. 一个1M的分区，用于bios grub2。gdisk 打上bios_grub标记 ef02
 注：win7只读USB的第一个分区，
 所以把一个分区做数据分区。
+
+
+一些新的系统使用GUID分区表(GPT)格式，这种格式是EFI固件所指定的一部分。但如果操作系统支持的话，GPT也可以用于BIOS平台(即MBR风格结合GPT格式的磁盘)，使用这种格式，需要使用独立的BIOS boot分区来保存GRUB，GRUB被嵌入到此分区，不会有任何风险。
+
+当在gpt磁盘上创建一个BIOS boot分区时，需要保证两件事：
+(1)它最小是31kB大小，但一般都会为此分区划分1MB的空间用于可扩展性；
+(2)必须要有合理的分区类型标识(flag type)。
+
+例如使用gun parted工具时，可以设置为bios_grub标识：
+
+parted /dev/sda toggle partition_num bios_grub
+parted /dev/sda set partiton_num bios_grub on
 
 4. mkdir $mountpoint/EFI/boot/
 	cp $mountpoint/ubuntu/grubx64.efi $mountpoint/EFI/boot/bootx64.efi
