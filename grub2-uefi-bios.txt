@@ -4,16 +4,29 @@
 
 
 
-注：如果同时需要bios和uefi。用dos分区表
+注：如果同时需要bios和uefi。有两种方法。
 
-1. 分一个ESP  ef00
-2. 一个data区
-3. 一个1M的分区，用于bios grub2。gdisk 打上bios_grub标记 ef02
-注：win7只读USB的第一个分区，
-所以把一个分区做数据分区。
+方法一：dos分区表
+
+步骤:
+1. 先分一个data区，放在第一个。
+2. 分一个ESP  ef00
+
+grub-install --target i386-pc \
+--recheck \ # 可选
+--boot-directory $grub_dir /dev/sdX
+
+grub-install --target x86_64-efi \
+--efi-directory $grub_dir \
+--boot-directory $grub_dir \
+--removable # 可选 --removable 安装当前的efi引导为 $mountpoint/EFI/BOOT/BOOTX64.EFI
+
+注：win7只读USB的第一个分区，所以把一个分区做数据分区。
+	分区时U盘前面留1M的空间，用来安装grub。
 
 
-一些新的系统使用GUID分区表(GPT)格式，这种格式是EFI固件所指定的一部分。但如果操作系统支持的话，GPT也可以用于BIOS平台(即MBR风格结合GPT格式的磁盘)，使用这种格式，需要使用独立的BIOS boot分区来保存GRUB，GRUB被嵌入到此分区，不会有任何风险。
+方法二：GPT 分区表
+	一些新的系统使用GUID分区表(GPT)格式，这种格式是EFI固件所指定的一部分。但如果操作系统支持的话，GPT也可以用于BIOS平台(即MBR风格结合GPT格式的磁盘)，使用这种格式，需要使用独立的BIOS boot分区来保存GRUB，GRUB被嵌入到此分区，不会有任何风险。
 
 当在gpt磁盘上创建一个BIOS boot分区时，需要保证两件事：
 (1)它最小是31kB大小，但一般都会为此分区划分1MB的空间用于可扩展性；
@@ -24,17 +37,23 @@
 parted /dev/sda toggle partition_num bios_grub
 parted /dev/sda set partiton_num bios_grub on
 
-4. mkdir $mountpoint/EFI/boot/
-	cp $mountpoint/ubuntu/grubx64.efi $mountpoint/EFI/boot/bootx64.efi
 
+步骤:
+1. 先分一个data区,
+2. 分一个ESP  ef00
+3. 分一个1M大小的分区不格式化，用于bios grub2。gdisk 打上bios_grub标识 ef02
 
 grub-install --target i386-pc \
---recheck \
---boot-directory /tmp/grub/ /dev/sdX
+--recheck \ # 可选
+--boot-directory $grub_dir /dev/sdX
 
 grub-install --target x86_64-efi \
---efi-directory /tmp/grub/ \
---boot-directory /tmp/grub/ \
---removable # --removable 安装当前的efi引导为 $mountpoint/EFI/BOOT/BOOTX64.EFI
+--efi-directory $grub_dir \
+--boot-directory  $grub_dir\
+--removable # 可选 --removable 安装当前的efi引导为 $mountpoint/EFI/BOOT/BOOTX64.EFI
 
 
+如UEFI引导项没认别,可能是安装uefi grub时没有--removable选项。
+如下操作也可:
+	mkdir $efi_mountpoint/EFI/boot/
+	cp $efi_mountpoint/ubuntu/grubx64.efi $efi_mountpoint/EFI/boot/bootx64.efi
