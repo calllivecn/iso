@@ -37,8 +37,8 @@ xorriso -as mkisofs -o ${outfile} -no-pad \
 	-eltorito-alt-boot -e boot/efi.img -no-emul-boot \
 	-append_partition 2 0x01 boot/efi.img \
 	-isohybrid-gpt-basdat -isohybrid-apm-hfsplus \
-	-appid "Deepin LiveCD" -publisher "Deepin Project <http://www.deepin.org>" \
-	-V "${3:-atm-deepin 2014.3}"  ${sour}
+	-appid "LiveCD" \
+	-V "${3:LiveCD}"  ${sour}
 
 
 #mkisofs -V ${3:-build-iso-${date}} -J -cache-inodes \
