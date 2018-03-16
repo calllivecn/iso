@@ -1,9 +1,9 @@
-## 我的mini linux救援iso工具
+## mini linux救援iso工具
 
 - - -
 
 ### update-mini-linux.sh:
 * 更新 mini-linux.iso
 
-### iso.sh:
+### make-mini-linux.sh:
 * 未完成
