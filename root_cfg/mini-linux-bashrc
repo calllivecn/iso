@@ -180,10 +180,6 @@ case "$1" in
 esac
 }
 
-pk(){
-ps aux |awk '{if($5==0) print $0}'
-}
-
 
 ###  define fbterm
 if [ "$TERM"x == "linux"x ];then
@@ -191,8 +187,8 @@ if [ "$TERM"x == "linux"x ];then
 fi
 
 
-### /isodev/env.sh
-my_env='/iso/'
+### /isodevice/env.sh
+my_env='/isodevice/env.sh'
 if [ -r "$my_env" ];then
 	. "$my_env"
 fi
