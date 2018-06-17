@@ -1,4 +1,4 @@
-## mini linux救援iso工具
+## mini linux救援iso生成工具
 
 - - -
 

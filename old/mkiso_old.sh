@@ -37,7 +37,7 @@ xorriso -as mkisofs -o ${outfile} -no-pad \
 	-eltorito-alt-boot -e boot/efi.img -no-emul-boot \
 	-append_partition 2 0x01 boot/efi.img \
 	-isohybrid-gpt-basdat -isohybrid-apm-hfsplus \
-	-appid "LiveCD" \
+	-appid "LiveCD" -publisher "author: calllivecn <https://github.com/calllivecn/iso>" \
 	-V "${3:LiveCD}"  ${sour}
 
 
