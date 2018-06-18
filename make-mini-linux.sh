@@ -43,7 +43,7 @@ ldlinux_c32=/usr/lib/syslinux/modules/bios/ldlinux.c32
 # 加载函数
 . $(dirname $0)/libmini-linux.sh
 
-#mini_linux_debs="${LIBPATH}"/mini-linux.debs
+mini_linux_debs="${LIBPATH}"/mini-linux.debs
 
 mirror='http://mirrors.ustc.edu.cn/ubuntu'
 
@@ -166,6 +166,10 @@ main(){
 	debootstrap_as
 
 	install_debs
+
+	install_required_debs
+
+	apt_upgrade_y
 
 	chroot_sh
 
