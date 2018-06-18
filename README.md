@@ -2,6 +2,12 @@
 
 - - -
 
+`生成一个linux liveCD，用作救援mini linux iso，带有一些修复工具（无GUI）。可以通过编写项目下的mini-linux.debs文件定制liveCD里的工具，生成时还可以通过手动操作将要生成的LIveCD的内容。可以直接dd到U盘启动，也可以参考项目内的grub2-uefi-bios.txt制作多引导。
+
+- 备一个liveCD关键时刻会很有用 -
+
+- - -
+
 ## make-mini-linux.sh:
 * 创建 mini-linux.iso
 
