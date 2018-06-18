@@ -38,5 +38,6 @@ Using: update-mini-linux.sh [-dlo] <-i>
 ### example
 * sudo update-mini-linux.sh -i Mini-linux.iso -o Mini-linux-update.iso -l 'Mini linux v2.0'
 
-#*make和update 中间会有chroot后手动操作步骤。*
-#*如果不需要手动操作exit或Ctrl+D退出。*
+# *make和update 中间会有chroot后手动操作步骤。*
+
+# *如果不需要手动操作exit或Ctrl+D退出。*
