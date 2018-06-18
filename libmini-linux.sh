@@ -69,7 +69,7 @@ __unresolv(){
 
 rm_var_lib_apt_lists(){
 
-	rm -vrf $work_dir/root/var/lib/apt/lists
+	rm -rf $work_dir/root/var/lib/apt/lists
 
 }
 
@@ -90,10 +90,7 @@ chroot_sh(){
 
 root_autologin(){
 	local agetty_service="$work_dir"/root/lib/systemd/system/getty@.service
-	
-	if ! sed -n '/ExecStart=/p' $agetty_service |grep -qE ' \-a root\b';then
-		sed -i '/ExecStart=/s/agetty/agetty -a root/' $agetty_service
-	fi
+	sed -ri '/ExecStart=/s#(ExecStart)=.*#\1=\-/sbin/agetty \-a root -J \%I \$TERM#' $agetty_service
 }
 
 rebuild_iso(){
@@ -125,7 +122,7 @@ xorriso -as genisoimage -o "$new_iso" -no-pad \
 	-no-emul-boot -boot-load-size 4 -boot-info-table \
 	-eltorito-alt-boot -e efi.img -no-emul-boot \
 	-isohybrid-gpt-basdat \
-	-appid "Mini Linux" -publisher "author: calllivecn <https://github.com/calllivecn/iso>" \
+	-publisher "author: calllivecn <https://github.com/calllivecn/iso>" \
 	-V "$iso_label" "$work_dir"/iso
 
 echo "iso file --> ${new_iso}"
@@ -219,10 +216,27 @@ __build_sources_list(){
 	echo "deb $mirror ${codename}-security universe >> $sources_list"
 }
 
+install_required_debs(){
+	local debs
+	 debs=$(cat "${LIBPATH}"/mini-linux-required.debs |tr '\n' ' ')
+	__resolv
+	__mount_sh
+	chroot "$work_dir"/root/ apt update
+	chroot "$work_dir"/root/ apt -y install $debs
+	chroot "$work_dir"/root/ apt clean
+	__umount_sh
+	__unresolv
+	 
+}
+
 apt_upgrade_y(){
+	__resolv
+	__mount_sh
 	chroot "$work_dir"/root/ apt update
 	chroot "$work_dir"/root/ apt upgrade -y
 	chroot "$work_dir"/root/ apt clean
+	__umount_sh
+	__unresolv
 }
 
 install_debs(){
@@ -231,9 +245,15 @@ install_debs(){
 
 	if [ -r "$mini_linux_debs" ];then
 		include_debs=$(cat $mini_linux_debs |tr '\n' ' ')
+		__resolv
+		__mount_sh
 		chroot "$work_dir"/root/ apt update
 		chroot "$work_dir"/root/ apt install -y $include_debs
 		chroot "$work_dir"/root/ apt clean
+		__umount_sh
+		__unresolv
+
+		apt_upgrade_y
 	else
 		apt_upgrade_y
 	fi
@@ -253,7 +273,14 @@ configure(){
 	# locale-gen zh_CN
 	sed -i 's/^# en_US.UTF-8/en_US.UTF-8/' "$work_dir"/root/etc/locale.gen
 	sed -i 's/^# zh_CN.UTF-8/zh_CN.UTF-8/' "$work_dir"/root/etc/locale.gen
+	__mount_sh
+
+	cp -v "${LIBPATH}"/root_cfg/10-ethX.network  "$work_dir"/root/etc/systemd/network/10-ethX.network
+	chroot "$work_dir"/root systemctl enable systemd-networkd.service
+
 	chroot "$work_dir"/root/ locale-gen
+
+	__umount_sh
 
 	cp -v "$LIBPATH"/root_cfg/mini-linux-bashrc "$work_dir"/root/root/.bashrc
 	cp -v "$LIBPATH"/root_cfg/tmux.conf_v2.6 "$work_dir"/root/etc/tmux.conf

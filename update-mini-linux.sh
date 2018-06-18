@@ -144,10 +144,10 @@ err_exit(){
 main(){
 
 	init_iso
-	
-	chroot_sh
 
 	apt_upgrade_y
+	
+	chroot_sh
 
 	configure
 
