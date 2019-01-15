@@ -228,7 +228,7 @@ __build_sources_list(){
 
 install_required_debs(){
 	local debs
-	 debs=$(cat "${LIBPATH}"/mini-linux-required.debs |tr '\n' ' ')
+	 debs=$(grep -vE '^#|^$' "${LIBPATH}"/mini-linux-required.debs |tr '\n' ' ')
 	__resolv
 	__mount_sh
 	chroot "$work_dir"/root/ apt update
@@ -254,7 +254,7 @@ install_debs(){
 	__build_sources_list
 
 	if [ -r "$mini_linux_debs" ];then
-		include_debs=$(cat $mini_linux_debs |tr '\n' ' ')
+		include_debs=$(grep -vE '^$|^#' $mini_linux_debs |tr '\n' ' ')
 		__resolv
 		__mount_sh
 		chroot "$work_dir"/root/ apt update

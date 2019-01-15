@@ -27,3 +27,5 @@ network-manager
 network-manager-pptp
 xfsprogs
 mtr-tiny
+# 清除NT3.x to win8.1的密码
+chntpw
