@@ -1,4 +1,4 @@
-# mini linux救援iso生成工具
+# mini linux救援iso生成工具 (基于debian系)
 
 - - -
 
@@ -47,6 +47,7 @@ Using: update-mini-linux.sh [-dlo] <-i>
 ### example
 * sudo update-mini-linux.sh -i Mini-linux.iso -o Mini-linux-update.iso -l 'Mini linux v2.0'
 
-# *make和update 中间会有chroot后手动操作步骤。*
 
-# *如果不需要手动操作exit或Ctrl+D退出。*
+# *make和update 中间会询问timeout 10s，是否进行chroot后手动操作步骤。*
+
+# *手动操作完成后exit或Ctrl+D退出。*
