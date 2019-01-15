@@ -33,3 +33,4 @@ syslinux-utils
 tmux
 usbutils
 wget
+curl

@@ -74,13 +74,23 @@ rm_var_lib_apt_lists(){
 }
 
 chroot_sh(){
+	local yesno=N
+
 	__resolv
 	__mount_sh
 
-	echo "already chroot ."
-	echo "Please proceed with your operation."
-	echo "if not operation, exit or Ctrl+D exit."
-	chroot "$work_dir"/root
+	echo "Countdown 10 seconds."
+	echo "Need a custom action?[y/N]"
+	
+	read -n 1 -t 10 yesno
+
+	if [ "$yesno"x = "y"x ];then
+
+		echo "already chroot ."
+		echo "Please proceed with your operation."
+		echo "if not operation, exit or Ctrl+D exit."
+		chroot "$work_dir"/root
+	fi
 
 	__umount_sh
 	__unresolv
