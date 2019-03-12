@@ -8,8 +8,7 @@
 #2.	cp -a /tmp/iso $work_dir/iso
 #	mkdir $taget/root
 #
-#3.	unsquashfs $filesystem.squashfs -d $work_dir/root
-#
+#3.	unsquashfs $filesystem.squashfs -d $work_dir/root #
 #4.	mv $work_dir/root/etc/resolv.conf{,.bak}
 #	cp /etc/resolv.conf $work_dir/root/etc/
 #
@@ -126,20 +125,6 @@ fi
 #exit 0
 
 # testing end
-
-signal_exit(){
-	set +e
-	umount "$old_iso"
-	set -e
-	clear_workspace
-	exit 1
-}
-
-err_exit(){
-	echo "ERROR EXIT"
-	signal_exit
-	exit 1
-}
 
 main(){
 
