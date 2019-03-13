@@ -110,18 +110,18 @@ chroot_sh(){
 root_autologin(){
 
 	# 这是之前的老方法了。
-	local agetty_service="$work_dir"/root/lib/systemd/system/getty@.service
-	sed -ri '/ExecStart=/s#(ExecStart)=.*#\1=\-/sbin/agetty \-a root -o "\-p -- \\\\u" -J \%I \$TERM#' $agetty_service
+	#local agetty_service="$work_dir"/root/lib/systemd/system/getty@.service
+	#sed -ri '/ExecStart=/s#(ExecStart)=.*#\1=\-/sbin/agetty \-a root -o "\-p -- \\\\u" -J \%I \$TERM#' $agetty_service
 
-	#local agetty_conf_d="$work_dir"/root/etc/systemd/system/getty@.service.d/
+	local agetty_conf_d="$work_dir"/root/etc/systemd/system/getty@.service.d/
 
-	#mkdir -p "$agetty_conf_d"
+	mkdir -p "$agetty_conf_d"
 
-	#local autologin="$agetty_conf_d"/autologin.conf
+	local autologin="$agetty_conf_d"/autologin.conf
 
-	#echo "[Service]" > "$autologin"
-	#echo "ExecStart=" >> "$autologin"
-	#echo "ExecStart=-/sbin/agetty -a root --nocelar %I \$TERM" >> "$autologin"
+	echo "[Service]" > "$autologin"
+	echo "ExecStart=" >> "$autologin"
+	echo "ExecStart=-/sbin/agetty -a root --nocelar %I \$TERM" >> "$autologin"
 }
 
 rebuild_iso(){
