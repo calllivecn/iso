@@ -79,12 +79,12 @@ chroot_sh(){
 	__resolv
 	__mount_sh
 
-	echo "Countdown 10 seconds."
+	echo -e "\e[31mCountdown 10 seconds.\e[0m"
 	while [ $flag = "1" ];
 	do
-		echo -n "Need a custom action?[y/N]"
-		echo
+		echo -en "\e[31mNeed a custom action?[y/N]\e[0m"
 		read -n 1 -t 10 yesno
+		echo ''
 		yesno=${yesno:-n}
 
 		if [ "$yesno"x = "y"x ] || [ "$yesno"x = "n"x ];then
