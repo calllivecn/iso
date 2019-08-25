@@ -1,0 +1,16 @@
+#!/bin/bash
+# date 2019-02-22 17:37:07
+# author calllivecn <c-all@qq.com>
+
+cat << EOF
+menuentry "boot uubntu iso from (hd0,gpt5)/ubuntu.iso" {
+
+	search --no-floppy --fs-uuid --set=root 29552e82-fd71-449d-9973-777d18a0b038
+
+	loopback lo /ubuntu.iso
+
+	linux (lo)/casper/vmlinz boot=casper iso-scan/filename=/ubuntu.iso
+
+	initrd (lo)/casper/initrd
+}
+EOF
