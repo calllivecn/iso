@@ -2,6 +2,10 @@
 # date 2017-10-31 22:08:50
 # author calllivecn <c-all@qq.com>
 
+依懒项:
+apt install efibootmgr < grub-efi-amd64-bin |grub-pc-bin > grub-efi-amd64-signed
+
+grub-efi-amd64-bin、grub-pc-bin : 对应你当前系统的启动方式的包，没有哪个请对应安装哪个。
 
 
 注：如果同时需要bios和uefi。有两种方法。

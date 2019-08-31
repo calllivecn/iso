@@ -39,7 +39,7 @@ init_iso(){
 	unsquashfs -f -d "$work_dir/root" "$work_dir/iso/casper/filesystem.squashfs" 
 	mv "$work_dir"/iso/casper/vmlinuz.efi "$work_dir"/root/$(readlink "$work_dir"/root/vmlinuz)
 	mv "$work_dir"/iso/casper/initrd.lz "$work_dir"/root/$(readlink "$work_dir"/root/initrd.img)
-	umount "$old_iso"
+	umount "$work_dir"/old_iso/
 }
 
 __mount_sh(){
@@ -74,15 +74,24 @@ rm_var_lib_apt_lists(){
 }
 
 chroot_sh(){
-	local yesno=N
+	local yesno=n flag=1
 
 	__resolv
 	__mount_sh
 
-	echo "Countdown 10 seconds."
-	echo "Need a custom action?[y/N]"
-	
-	read -n 1 -t 10 yesno
+	echo -e "\e[31mCountdown 10 seconds.\e[0m"
+	while [ $flag = "1" ];
+	do
+		echo -en "\e[31mNeed a custom action?[y/N]\e[0m"
+		read -n 1 -t 10 yesno
+		echo ''
+		yesno=${yesno:-n}
+
+		if [ "$yesno"x = "y"x ] || [ "$yesno"x = "n"x ];then
+			flag=0
+		fi
+
+	done
 
 	if [ "$yesno"x = "y"x ];then
 
@@ -99,8 +108,20 @@ chroot_sh(){
 # 退出 chroot 后的工作
 
 root_autologin(){
-	local agetty_service="$work_dir"/root/lib/systemd/system/getty@.service
-	sed -ri '/ExecStart=/s#(ExecStart)=.*#\1=\-/sbin/agetty \-a root -J \%I \$TERM#' $agetty_service
+
+	# 这是之前的老方法了。
+	#local agetty_service="$work_dir"/root/lib/systemd/system/getty@.service
+	#sed -ri '/ExecStart=/s#(ExecStart)=.*#\1=\-/sbin/agetty \-a root -o "\-p -- \\\\u" -J \%I \$TERM#' $agetty_service
+
+	local agetty_conf_d="$work_dir"/root/etc/systemd/system/getty@.service.d/
+
+	mkdir -p "$agetty_conf_d"
+
+	local autologin="$agetty_conf_d"/autologin.conf
+
+	echo "[Service]" > "$autologin"
+	echo "ExecStart=" >> "$autologin"
+	echo "ExecStart=-/sbin/agetty -a root --nocelar %I \$TERM" >> "$autologin"
 }
 
 rebuild_iso(){
@@ -146,7 +167,8 @@ clear_workspace(){
 
 signal_exit(){
 	set +e
-	umount "$old_iso"
+	umount "$work_dir"/old_iso/
+	__umount_sh
 	set -e
 	clear_workspace
 	exit 1
@@ -186,7 +208,7 @@ __mk_efi_img(){
 	mkdir -vp "$efi_dir"
 	mount -v -o loop "$efi" "$efi_dir"
 
-	grub-install --boot-directory "$work_dir"/iso/boot --efi-directory "$efi_dir" --removable
+	grub-install --target x86_64-efi --boot-directory "$work_dir"/iso/boot --efi-directory "$efi_dir" --removable
 
 	sed -ri s#\''.*'\'#\'/boot/grub\'# "$efi_dir"/EFI/BOOT/grub.cfg
 
@@ -294,6 +316,8 @@ configure(){
 
 	cp -v "$LIBPATH"/root_cfg/mini-linux-bashrc "$work_dir"/root/root/.bashrc
 	cp -v "$LIBPATH"/root_cfg/tmux.conf_v2.6 "$work_dir"/root/etc/tmux.conf
+
+	sync
 }
 
 
