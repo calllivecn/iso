@@ -125,33 +125,33 @@ fi
 # function define 
 
 check_pkg_file(){
-local deb flag_lack=false
-
-echo "check packages ... "
-for deb in debootstrap parted genisoimage xorriso isolinux \
-squashfs-tools syslinux syslinux-utils;
-do
-	dpkg -l $deb &> /dev/null
-	if [ $? -ne 0 ];then
-		echo "please install $deb, e.g: apt install $deb"
-		flag_lack=true
+	local deb flag_lack=false
+	
+	echo "check packages ... "
+	for deb in debootstrap parted genisoimage xorriso isolinux \
+	squashfs-tools syslinux syslinux-utils;
+	do
+		dpkg -l $deb &> /dev/null
+		if [ $? -ne 0 ];then
+			echo "please install $deb, e.g: apt install $deb"
+			flag_lack=true
+		fi
+	done
+	echo "check packages ... done"
+	
+	echo "check files ... "
+	for deb in $isohdpfx $isolinux_bin $vesamenu_c32 $ldlinux_c32;
+	do
+		if [ ! -f $deb ];then
+			echo "Lack of $deb files."
+			flag_lack=true
+		fi
+	done
+	echo "check files ... done"
+	
+	if $flag_lack;then
+		return 1
 	fi
-done
-echo "check packages ... done"
-
-echo "check files ... "
-for deb in $isohdpfx $isolinux_bin $vesamenu_c32 $ldlinux_c32;
-do
-	if [ ! -f $deb ];then
-		echo "Lack of $deb files."
-		flag_lack=true
-	fi
-done
-echo "check files ... done"
-
-if $flag_lack;then
-	return 1
-fi
 }
 # test check_pkg_file
 check_pkg_file
@@ -182,6 +182,6 @@ main(){
 	clear_workspace
 }
 
-trap "clear_workspace" SIGINT SIGTERM ERR
+trap "signal_exit" SIGINT SIGTERM ERR
 
 main
