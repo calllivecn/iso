@@ -249,6 +249,9 @@ __build_sources_list(){
 }
 
 install_required_debs(){
+
+	__build_sources_list
+
 	local debs
 	 debs=$(grep -vE '^#|^$' "${LIBPATH}"/mini-linux-required.debs |tr '\n' ' ')
 	__resolv
@@ -273,7 +276,6 @@ apt_upgrade_y(){
 
 install_debs(){
 
-	__build_sources_list
 
 	if [ -r "$mini_linux_debs" ];then
 		include_debs=$(grep -vE '^$|^#' $mini_linux_debs |tr '\n' ' ')
