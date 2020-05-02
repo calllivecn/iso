@@ -30,6 +30,9 @@ PROGRAM="${0##*/}"
 #
 #######################
 
+check_skip(){
+	:
+}
 
 init_iso(){
 	mkdir "$work_dir"/old_iso
@@ -83,7 +86,9 @@ chroot_sh(){
 	while [ $flag = "1" ];
 	do
 		echo -en "\e[31mNeed a custom action?[y/N]\e[0m"
+		set +e
 		read -n 1 -t 10 yesno
+		set -e
 		echo ''
 		yesno=${yesno:-n}
 
@@ -194,8 +199,24 @@ err_exit(){
 ########################
 
 build_iso(){
-	mv -v "$work_dir"/root/$(readlink "$work_dir"/root/vmlinuz) "$work_dir"/iso/casper/vmlinuz.efi
-	mv -v "$work_dir"/root/$(readlink "$work_dir"/root/initrd.img) "$work_dir"/iso/casper/initrd.lz
+	vmlinuz_efi="$work_dir"/root/$(readlink "$work_dir"/root/vmlinuz)
+	vmlinuz_efi_target="$work_dir"/iso/casper/vmlinuz.efi
+
+	initrd_img_="$work_dir"/root/$(readlink "$work_dir"/root/initrd.img)
+	initrd_img_target="$work_dir"/iso/casper/initrd.lz
+
+	if [ -f "$vmlinuz_efi" ];then
+		mv -v "$vmlinuz_efi" "$vmlinuz_efi_target"
+	else
+		mv -v "$work_dir/boot/vmlinuz" "$vmlinuz_efi_target"
+	fi
+
+	if [ -f "$initrd_img" ];then
+		mv -v "$initrd_img" "$initrd_img_target"
+	else
+		mv -v "$work_dir"/boot/initrd.img "$initrd_efi_target"
+	fi
+
 	mksquashfs "$work_dir"/root "$work_dir"/iso/casper/filesystem.squashfs -comp xz -b 1M
 }
 
