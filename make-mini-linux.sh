@@ -46,6 +46,7 @@ ldlinux_c32=/usr/lib/syslinux/modules/bios/ldlinux.c32
 mini_linux_debs="${LIBPATH}"/mini-linux.debs
 
 mirror='http://mirrors.ustc.edu.cn/ubuntu'
+mirror='http://mirrors.aliyun.com/ubuntu'
 
 using(){
 	local str="Using: ${PROGRAM} [-dlo] [-c <Codename>] [-m <mirros>]"
@@ -121,22 +122,26 @@ else
 fi
 
 
+trap "signal_exit" SIGINT SIGTERM ERR
 
 # function define 
 
 check_pkg_file(){
-	local deb flag_lack=false
+
+	set +e
+
+	local deb flag_lock="no"
 	
 	echo "check packages ... "
-	for deb in debootstrap parted genisoimage xorriso isolinux \
-	squashfs-tools syslinux syslinux-utils;
+	for deb in debootstrap parted genisoimage xorriso isolinux squashfs-tools syslinux syslinux-utils;
 	do
 		dpkg -l $deb &> /dev/null
 		if [ $? -ne 0 ];then
 			echo "please install $deb, e.g: apt install $deb"
-			flag_lack=true
+			flag_lock="yes"
 		fi
 	done
+
 	echo "check packages ... done"
 	
 	echo "check files ... "
@@ -144,19 +149,20 @@ check_pkg_file(){
 	do
 		if [ ! -f $deb ];then
 			echo "Lack of $deb files."
-			flag_lack=true
+			flag_lock="yes"
 		fi
 	done
 	echo "check files ... done"
 	
-	if $flag_lack;then
+	if [ "$flag_lock"x = "yes"x ];then
 		return 1
 	fi
+
+	set -e
 }
 # test check_pkg_file
 check_pkg_file
-#echo "check running ... done"; exit 0
-
+echo "check running ... done"
 
 
 main(){
@@ -165,9 +171,9 @@ main(){
 
 	debootstrap_as
 
-	install_debs
-
 	install_required_debs
+
+	install_debs
 
 	apt_upgrade_y
 
@@ -182,6 +188,5 @@ main(){
 	clear_workspace
 }
 
-trap "signal_exit" SIGINT SIGTERM ERR
 
 main
