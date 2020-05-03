@@ -16,6 +16,9 @@ grub-efi-amd64-bin、grub-pc-bin : 对应你当前系统的启动方式的包，
 1. 先分一个data区，放在第一个。
 2. 分一个ESP  ef00
 
+
+# $grub_dir 是 grub/ 的父目录。
+
 grub-install --target i386-pc \
 --recheck \ # 可选
 --boot-directory $grub_dir /dev/sdX
