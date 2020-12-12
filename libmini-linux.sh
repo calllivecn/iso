@@ -45,6 +45,13 @@ init_iso(){
 	umount "$work_dir"/old_iso/
 }
 
+__new_mount_sh(){
+	mount --rbind /dev/devtmpfs "$work_dir"/root/dev
+	mount --rbind /dev/proc "$work_dir"/root/proc
+	mount --rbind /dev/sysfs "$work_dir"/root/sys
+	mount --rbind /run "$work_dir"/root/run
+}
+
 __mount_sh(){
 	mount -vt devtmpfs none "$work_dir"/root/dev
 	mount -vt devpts none "$work_dir"/root/dev/pts
