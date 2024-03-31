@@ -1,6 +1,6 @@
 #!/bin/bash
 # 2017-10-19
-# author calllivecn <c-all@qq.com>
+# author calllivecn <calllivecn@outlook.com>
 #
 #
 #1.	mount -o loop $isofile /tmp/iso
